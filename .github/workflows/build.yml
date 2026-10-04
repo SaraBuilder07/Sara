@@ -9,8 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Descomprimir proyecto
-        run: unzip -q sara.zip -d proyecto
+        with:
+          fetch-depth: 0
+      - name: Descomprimir el zip mas reciente
+        run: |
+          ZIP="$(for f in *.zip; do echo "$(git log -1 --format=%ct -- "$f") $f"; done | sort -n | tail -1 | cut -d' ' -f2-)"
+          echo "Usando: $ZIP"
+          unzip -q "$ZIP" -d proyecto
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
